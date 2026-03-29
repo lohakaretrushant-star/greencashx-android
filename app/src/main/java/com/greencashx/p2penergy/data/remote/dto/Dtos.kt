@@ -341,6 +341,34 @@ data class KpiResponse(
     val data: KpiData?
 )
 
+// ── Notifications DTOs ────────────────────────────────────────────────────────
+
+data class NotificationDto(
+    val id: String,
+    val title: String,
+    val body: String,
+    val type: String?,
+    val isRead: Boolean,
+    val priority: String?,
+    val referenceId: String?,
+    val createdAt: String?
+)
+
+data class NotificationsResponse(
+    val success: Boolean,
+    val data: List<NotificationDto>?,
+    val total: Int?,
+    val page: Int?,
+    val limit: Int?
+)
+
+data class UnreadCountData(val count: Int)
+
+data class UnreadCountResponse(
+    val success: Boolean,
+    val data: UnreadCountData?
+)
+
 data class KpiUnits(
     val generated: Double,
     val purchased: Double,

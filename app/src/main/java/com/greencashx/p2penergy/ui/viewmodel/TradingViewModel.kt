@@ -6,13 +6,19 @@ import com.greencashx.p2penergy.data.remote.ApiService
 import com.greencashx.p2penergy.data.remote.dto.*
 import com.greencashx.p2penergy.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class TradingUiState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
     val successMessage: String? = null,
     val activePrice: Double = 0.0,
@@ -23,7 +29,8 @@ data class TradingUiState(
     val orderBook: OrderBookData? = null,
     val wallet: WalletData? = null,
     val isOrderPlacing: Boolean = false,
-    val lastOrderResult: PlaceOrderData? = null
+    val lastOrderResult: PlaceOrderData? = null,
+    val kycStatus: String = "pending"
 )
 
 @HiltViewModel
@@ -35,29 +42,71 @@ class TradingViewModel @Inject constructor(
     private val _state = MutableStateFlow(TradingUiState())
     val state: StateFlow<TradingUiState> = _state
 
+    // Emits when session expires — UI should navigate to Login
+    private val _sessionExpired = MutableSharedFlow<Unit>(replay = 0)
+    val sessionExpired: SharedFlow<Unit> = _sessionExpired
+
+    private var pollJob: Job? = null
+
     private fun token() = authRepository.getToken()
 
-    fun loadAll() {
+    init {
+        startPolling()
+    }
+
+    fun startPolling() {
+        pollJob?.cancel()
+        pollJob = viewModelScope.launch {
+            while (isActive) {
+                loadKpi()
+                delay(30_000L)
+            }
+        }
+    }
+
+    fun stopPolling() {
+        pollJob?.cancel()
+        pollJob = null
+    }
+
+    override fun onCleared() {
+        stopPolling()
+        super.onCleared()
+    }
+
+    fun loadAll(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true, errorMessage = null)
+            _state.value = _state.value.copy(
+                isLoading = !isRefresh, isRefreshing = isRefresh, errorMessage = null
+            )
             try {
                 val priceRes = apiService.getActivePrice(token())
+                if (priceRes.code() == 401) { _sessionExpired.emit(Unit); return@launch }
                 val kpiRes   = apiService.getKpi(token())
                 val obRes    = apiService.getOrderBook(token())
                 val ordRes   = apiService.getMyOrders(token())
                 val tradeRes = apiService.getMyTrades(token())
 
                 _state.value = _state.value.copy(
-                    isLoading = false,
+                    isLoading = false, isRefreshing = false,
                     activePrice = priceRes.body()?.data?.unitPrice ?: 0.0,
                     kpi = kpiRes.body()?.data,
                     orderBook = obRes.body()?.data,
                     orders = ordRes.body()?.data ?: emptyList(),
                     trades = tradeRes.body()?.data ?: emptyList()
                 )
+                // Load KYC status silently
+                try {
+                    val kycRes = apiService.getKycStatus(token())
+                    if (kycRes.isSuccessful) {
+                        _state.value = _state.value.copy(
+                            kycStatus = kycRes.body()?.data?.status ?: "pending"
+                        )
+                    }
+                } catch (_: Exception) {}
             } catch (e: Exception) {
                 _state.value = _state.value.copy(
-                    isLoading = false,
+                    isLoading = false, isRefreshing = false,
                     errorMessage = "Failed to load trading data: ${e.localizedMessage}"
                 )
             }

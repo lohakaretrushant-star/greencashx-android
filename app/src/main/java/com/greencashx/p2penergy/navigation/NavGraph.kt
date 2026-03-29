@@ -21,6 +21,7 @@ import com.greencashx.p2penergy.ui.screens.onboarding.SplashScreen
 import com.greencashx.p2penergy.ui.screens.profile.ProfileScreen
 import com.greencashx.p2penergy.ui.screens.services.ServicesScreen
 import com.greencashx.p2penergy.ui.screens.transactions.TransactionScreen
+import com.greencashx.p2penergy.ui.screens.notifications.NotificationsScreen
 import com.greencashx.p2penergy.ui.viewmodel.AuthViewModel
 
 @Composable
@@ -139,6 +140,10 @@ fun GreenCashXNavGraph(
 
         composable(Screen.TradingKpi.route) {
             TradingKpiScreen(navController = navController)
+        }
+
+        composable(Screen.Notifications.route) {
+            NotificationsScreen(navController = navController)
         }
     }
 }

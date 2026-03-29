@@ -10,6 +10,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,8 +49,27 @@ fun TradingScreen(
 ) {
     val state by viewModel.state.collectAsState()
     var selectedTab by remember { mutableIntStateOf(0) }
+    val pullRefreshState = rememberPullToRefreshState()
 
     LaunchedEffect(Unit) { viewModel.loadAll() }
+
+    LaunchedEffect(pullRefreshState.isRefreshing) {
+        if (pullRefreshState.isRefreshing) {
+            viewModel.loadAll(isRefresh = true)
+        }
+    }
+    LaunchedEffect(state.isRefreshing) {
+        if (!state.isRefreshing) pullRefreshState.endRefresh()
+    }
+
+    // Handle session expiry — navigate to Login
+    LaunchedEffect(Unit) {
+        viewModel.sessionExpired.collect {
+            navController.navigate(Screen.Login.route) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
+    }
 
     // Error/Success snackbar
     val snackbarHostState = remember { SnackbarHostState() }
@@ -92,11 +114,42 @@ fun TradingScreen(
         containerColor = PageBg
     ) { padding ->
 
+        Box(
+            modifier = Modifier.fillMaxSize().padding(padding)
+                .nestedScroll(pullRefreshState.nestedScrollConnection)
+        ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding),
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // ── KYC Gate Banner ───────────────────────────────────────────────
+            if (state.kycStatus != "verified") {
+                item {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3CD))
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                                Icon(Icons.Default.Warning, contentDescription = null,
+                                    tint = Color(0xFFE65100), modifier = Modifier.size(20.dp))
+                                Spacer(Modifier.width(8.dp))
+                                Text("KYC verification required to trade",
+                                    fontSize = 13.sp, color = Color(0xFF5D3A00), fontWeight = FontWeight.Medium)
+                            }
+                            TextButton(onClick = { navController.navigate(Screen.Kyc.route) }) {
+                                Text("Verify →", color = Color(0xFFE65100), fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+            }
             // ── Price Banner ─────────────────────────────────────────────────
             item {
                 PriceBanner(price = state.activePrice, isLoading = state.isLoading)
@@ -220,6 +273,11 @@ fun TradingScreen(
 
             item { Spacer(modifier = Modifier.height(80.dp)) }
         }
+            PullToRefreshContainer(
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+        } // end Box
     }
 }
 

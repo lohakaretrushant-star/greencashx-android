@@ -155,4 +155,29 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: GenerateUnitsRequest
     ): Response<GenericResponse>
+
+    // ── Notifications ─────────────────────────────────────────────────────────
+
+    @GET("api/notifications")
+    suspend fun getNotifications(
+        @Header("Authorization") token: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 30
+    ): Response<NotificationsResponse>
+
+    @GET("api/notifications/unread-count")
+    suspend fun getUnreadCount(
+        @Header("Authorization") token: String
+    ): Response<UnreadCountResponse>
+
+    @PUT("api/notifications/{id}/read")
+    suspend fun markNotificationRead(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    ): Response<GenericResponse>
+
+    @PUT("api/notifications/read-all")
+    suspend fun markAllNotificationsRead(
+        @Header("Authorization") token: String
+    ): Response<GenericResponse>
 }
