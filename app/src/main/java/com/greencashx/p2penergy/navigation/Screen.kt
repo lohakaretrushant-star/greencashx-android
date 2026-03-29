@@ -20,4 +20,5 @@ sealed class Screen(val route: String) {
     data object Notifications : Screen("notifications")
     data object Kyc : Screen("kyc")
     data object Services : Screen("services")
+    data object SolarChat : Screen("solar_chat")
 }

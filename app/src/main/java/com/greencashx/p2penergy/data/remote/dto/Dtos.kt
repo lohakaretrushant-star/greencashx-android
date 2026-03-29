@@ -187,6 +187,20 @@ data class AiInsightDto(
     val potentialGcx: Double?
 )
 
+// ── AI Chat DTOs ──────────────────────────────────────────────────────────────
+
+data class ChatRequest(val message: String)
+
+data class ChatData(
+    val reply: String,
+    val poweredBy: String?
+)
+
+data class ChatResponse(
+    val success: Boolean,
+    val data: ChatData?
+)
+
 // ── Generic ───────────────────────────────────────────────────────────────────
 
 data class GenericResponse(

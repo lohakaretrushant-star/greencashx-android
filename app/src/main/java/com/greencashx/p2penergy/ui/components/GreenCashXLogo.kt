@@ -36,7 +36,7 @@ fun GreenCashXLogo(modifier: Modifier = Modifier) {
             text = buildAnnotatedString {
                 withStyle(
                     SpanStyle(
-                        color = Color(0xFFFFFFFF),
+                        color = Color(0xFF69F0AE),
                         fontWeight = FontWeight.Bold,
                         fontFamily = Poppins
                     )

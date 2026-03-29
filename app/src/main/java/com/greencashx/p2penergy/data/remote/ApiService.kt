@@ -80,4 +80,10 @@ interface ApiService {
     suspend fun getAiInsights(
         @Header("Authorization") token: String
     ): Response<AiInsightsResponse>
+
+    @POST("api/ai/chat")
+    suspend fun chat(
+        @Header("Authorization") token: String,
+        @Body request: ChatRequest
+    ): Response<ChatResponse>
 }

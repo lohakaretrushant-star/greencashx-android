@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.greencashx.p2penergy.ui.screens.ai.AIInsightsScreen
+import com.greencashx.p2penergy.ui.screens.ai.SolarChatScreen
 import com.greencashx.p2penergy.ui.screens.auth.LoginScreen
 import com.greencashx.p2penergy.ui.screens.auth.RegisterScreen
 import com.greencashx.p2penergy.ui.screens.blockchain.WalletScreen
@@ -124,6 +125,10 @@ fun GreenCashXNavGraph(
 
         composable(Screen.Services.route) {
             ServicesScreen(navController = navController)
+        }
+
+        composable(Screen.SolarChat.route) {
+            SolarChatScreen(navController = navController)
         }
     }
 }

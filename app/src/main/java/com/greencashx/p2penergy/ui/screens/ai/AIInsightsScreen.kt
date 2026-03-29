@@ -65,6 +65,11 @@ fun AIInsightsScreen(navController: NavController) {
                 AIPoweredHeader(isThinking = isAiThinking, rotation = rotation, onRefresh = { isAiThinking = !isAiThinking })
             }
 
+            // Solar Chatbot CTA
+            item {
+                SolarChatBannerCard(onClick = { navController.navigate(Screen.SolarChat.route) })
+            }
+
             // Demand Forecast Chart Card
             item {
                 DemandForecastCard()
@@ -335,6 +340,63 @@ private fun CarbonStat(label: String, value: String, emoji: String, modifier: Mo
         Text(emoji, fontSize = 22.sp)
         Text(value, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = GreenPrimary)
         Text(label, style = MaterialTheme.typography.labelSmall, color = OnSurfaceMuted)
+    }
+}
+
+@Composable
+private fun SolarChatBannerCard(onClick: () -> Unit) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.linearGradient(listOf(GreenPrimary.copy(alpha = 0.25f), EnergyBlue.copy(alpha = 0.15f))),
+                    RoundedCornerShape(20.dp)
+                )
+                .padding(18.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(52.dp)
+                        .background(GreenPrimary.copy(alpha = 0.2f), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("🌿", fontSize = 26.sp)
+                }
+                Spacer(modifier = Modifier.width(14.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        "Ask Solar AI",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = OnSurfaceLight
+                    )
+                    Text(
+                        "KYC, solar setup, P2P trading, carbon credits & more",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = OnSurfaceMuted
+                    )
+                }
+                Surface(
+                    color = GreenPrimary.copy(alpha = 0.2f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        " Chat  →  ",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = GreenPrimary,
+                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 6.dp)
+                    )
+                }
+            }
+        }
     }
 }
 
