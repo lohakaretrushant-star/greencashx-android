@@ -23,7 +23,11 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: |
+          if [ ! -f gradlew ]; then
+            curl -s https://raw.githubusercontent.com/gradle/gradle/master/gradlew -o gradlew
+          fi
+          chmod +x gradlew
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug
