@@ -1,0 +1,17 @@
+# Android build outputs
+build/
+app/build/
+.gradle/
+.kotlin/
+local.properties
+
+# IDE
+.idea/
+*.iml
+
+# Logs
+build_*.txt
+
+# Backend secrets
+backend/.env
+backend/node_modules/
