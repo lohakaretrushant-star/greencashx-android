@@ -207,3 +207,198 @@ data class GenericResponse(
     val success: Boolean,
     val message: String?
 )
+
+// ── Trading DTOs ──────────────────────────────────────────────────────────────
+
+data class ActivePriceResponse(
+    val success: Boolean,
+    val data: ActivePriceData?
+)
+
+data class ActivePriceData(
+    val priceId: String,
+    val unitPrice: Double,
+    val effectiveFrom: String?,
+    val notes: String?
+)
+
+data class PlaceOrderRequest(
+    val orderType: String,   // "BUY" or "SELL"
+    val units: Double
+)
+
+data class PlaceOrderResponse(
+    val success: Boolean,
+    val message: String?,
+    val data: PlaceOrderData?,
+    val code: String?
+)
+
+data class PlaceOrderData(
+    val orderId: String,
+    val orderType: String,
+    val units: Double,
+    val pricePerUnit: Double,
+    val totalEstimate: Double,
+    val status: String
+)
+
+data class OrderDto(
+    val id: String,
+    val orderType: String,
+    val units: Double,
+    val unitsRemaining: Double,
+    val pricePerUnit: Double,
+    val status: String,
+    val rejectionReason: String?,
+    val placedAt: String
+)
+
+data class OrdersResponse(
+    val success: Boolean,
+    val data: List<OrderDto>?
+)
+
+data class TradeDto(
+    val id: String,
+    val buyOrderId: String,
+    val sellOrderId: String,
+    val buyerId: String,
+    val buyerName: String,
+    val sellerId: String,
+    val sellerName: String,
+    val units: Double,
+    val pricePerUnit: Double,
+    val totalAmount: Double,
+    val buyerFee: Double,
+    val sellerFee: Double,
+    val buyerPayable: Double,
+    val sellerReceivable: Double,
+    val status: String,
+    val matchedAt: String?,
+    val settledAt: String?,
+    val role: String
+)
+
+data class TradesResponse(
+    val success: Boolean,
+    val data: List<TradeDto>?
+)
+
+data class OrderBookResponse(
+    val success: Boolean,
+    val data: OrderBookData?
+)
+
+data class OrderBookData(
+    val buyOrders: List<OrderBookEntry>,
+    val sellOrders: List<OrderBookEntry>
+)
+
+data class OrderBookEntry(
+    val id: String,
+    val units: Double,
+    val unitsRemaining: Double,
+    val pricePerUnit: Double,
+    val name: String,
+    val placedAt: String?
+)
+
+// ── Ledger + KPI DTOs ─────────────────────────────────────────────────────────
+
+data class LedgerResponse(
+    val success: Boolean,
+    val data: LedgerData?
+)
+
+data class DiscomInfo(
+    val consumerId: String?,
+    val gridArea: String?,
+    val lastBillUnits: Double,
+    val tariff: String?,
+    val sanctionedLoad: Double,
+    val isVerified: Boolean
+)
+
+data class LedgerData(
+    val userType: String,
+    val unitsGenerated: Double,
+    val unitsPurchased: Double,
+    val unitsSold: Double,
+    val unitsConsumed: Double,
+    val unitsAvailable: Double,
+    val maxBuyUnits: Double,
+    val unitsAlreadyBought: Double,
+    val remainingBuyLimit: Double,
+    val walletInr: Double,
+    val walletLocked: Double,
+    val discom: DiscomInfo,
+    val lastUpdated: String?
+)
+
+data class KpiResponse(
+    val success: Boolean,
+    val data: KpiData?
+)
+
+data class KpiUnits(
+    val generated: Double,
+    val purchased: Double,
+    val sold: Double,
+    val available: Double,
+    val availableValue: Double
+)
+
+data class KpiBuyLimit(
+    val max: Double,
+    val used: Double,
+    val remaining: Double,
+    val lastBillUnits: Double
+)
+
+data class KpiData(
+    val userType: String,
+    val walletInr: Double,
+    val activePrice: Double,
+    val openOrders: Int,
+    val settledTrades: Int,
+    val totalSpent: Double,
+    val totalEarned: Double,
+    val units: KpiUnits,
+    val buyLimit: KpiBuyLimit,
+    val gridArea: String
+)
+
+data class WalletResponse(
+    val success: Boolean,
+    val data: WalletData?
+)
+
+data class WalletTxDto(
+    val side: String,
+    val amount: Double,
+    val units: Double,
+    val timestamp: String?,
+    val status: String
+)
+
+data class WalletData(
+    val balance: Double,
+    val locked: Double,
+    val available: Double,
+    val recentTransactions: List<WalletTxDto>
+)
+
+data class LinkDiscomRequest(
+    val consumerId: String,
+    val gridArea: String
+)
+
+data class GenerateUnitsRequest(
+    val units: Double
+)
+
+data class DepositRequest(
+    val amount: Double
+)
+

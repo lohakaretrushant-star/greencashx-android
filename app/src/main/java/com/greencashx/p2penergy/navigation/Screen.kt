@@ -21,4 +21,6 @@ sealed class Screen(val route: String) {
     data object Kyc : Screen("kyc")
     data object Services : Screen("services")
     data object SolarChat : Screen("solar_chat")
+    data object Trading : Screen("trading")
+    data object TradingKpi : Screen("trading_kpi")
 }

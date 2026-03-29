@@ -207,11 +207,11 @@ private fun BalancePill(label: String, value: String, emoji: String) {
 @Composable
 private fun QuickActionsRow(navController: NavController) {
     val actions = listOf(
-        QuickAction("Buy Energy", Icons.Default.ShoppingCart, EnergyBlue, Screen.MarketPlace.route),
-        QuickAction("Sell Energy", Icons.Default.Sell, SuccessGreen, Screen.CreateListing.route),
-        QuickAction("Services", Icons.Default.Build, GreenPrimary, Screen.Services.route),
+        QuickAction("Exchange", Icons.Default.SwapHoriz, Color(0xFF1B8A3E), Screen.Trading.route),
+        QuickAction("Market", Icons.Default.Storefront, EnergyBlue, Screen.MarketPlace.route),
         QuickAction("AI Insights", Icons.Default.AutoAwesome, BlockchainPurple, Screen.AIInsights.route),
         QuickAction("Wallet", Icons.Default.AccountBalanceWallet, CashGold, Screen.Wallet.route),
+        QuickAction("Services", Icons.Default.Build, GreenPrimary, Screen.Services.route),
     )
 
     Column(modifier = Modifier.padding(horizontal = 20.dp)) {
@@ -494,7 +494,7 @@ fun GreenCashXBottomBar(navController: NavController, currentRoute: String) {
     val items = listOf(
         BottomNavItem("Home", Icons.Default.Home, Screen.Dashboard.route),
         BottomNavItem("Market", Icons.Default.Storefront, Screen.MarketPlace.route),
-        BottomNavItem("Services", Icons.Default.Build, Screen.Services.route),
+        BottomNavItem("Exchange", Icons.Default.SwapHoriz, Screen.Trading.route),
         BottomNavItem("Wallet", Icons.Default.AccountBalanceWallet, Screen.Wallet.route),
         BottomNavItem("Profile", Icons.Default.Person, Screen.Profile.route),
     )

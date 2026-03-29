@@ -86,4 +86,73 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: ChatRequest
     ): Response<ChatResponse>
+
+    // ── Trading ───────────────────────────────────────────────────────────────
+
+    @GET("api/trading/price")
+    suspend fun getActivePrice(
+        @Header("Authorization") token: String
+    ): Response<ActivePriceResponse>
+
+    @POST("api/trading/order")
+    suspend fun placeOrder(
+        @Header("Authorization") token: String,
+        @Body request: PlaceOrderRequest
+    ): Response<PlaceOrderResponse>
+
+    @GET("api/trading/orders")
+    suspend fun getMyOrders(
+        @Header("Authorization") token: String
+    ): Response<OrdersResponse>
+
+    @GET("api/trading/trades")
+    suspend fun getMyTrades(
+        @Header("Authorization") token: String
+    ): Response<TradesResponse>
+
+    @GET("api/trading/orderbook")
+    suspend fun getOrderBook(
+        @Header("Authorization") token: String
+    ): Response<OrderBookResponse>
+
+    @PUT("api/trading/order/{id}/cancel")
+    suspend fun cancelOrder(
+        @Header("Authorization") token: String,
+        @Path("id") orderId: String
+    ): Response<GenericResponse>
+
+    // ── Ledger ────────────────────────────────────────────────────────────────
+
+    @GET("api/ledger/me")
+    suspend fun getLedger(
+        @Header("Authorization") token: String
+    ): Response<LedgerResponse>
+
+    @GET("api/ledger/kpi")
+    suspend fun getKpi(
+        @Header("Authorization") token: String
+    ): Response<KpiResponse>
+
+    @GET("api/ledger/wallet")
+    suspend fun getWallet(
+        @Header("Authorization") token: String
+    ): Response<WalletResponse>
+
+    @POST("api/ledger/wallet/deposit")
+    suspend fun deposit(
+        @Header("Authorization") token: String,
+        @Body request: DepositRequest
+    ): Response<GenericResponse>
+
+    @POST("api/ledger/discom/link")
+    suspend fun linkDiscom(
+        @Header("Authorization") token: String,
+        @Body request: LinkDiscomRequest
+    ): Response<GenericResponse>
+
+    @POST("api/ledger/generate")
+    suspend fun logGeneratedUnits(
+        @Header("Authorization") token: String,
+        @Body request: GenerateUnitsRequest
+    ): Response<GenericResponse>
 }
